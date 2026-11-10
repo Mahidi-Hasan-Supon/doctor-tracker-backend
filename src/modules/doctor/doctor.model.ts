@@ -81,6 +81,7 @@ const doctorSchema = new Schema<IDoctor>(
 // Indexes for optimized queries
 doctorSchema.index({ specialization: 1, isActive: 1 });
 doctorSchema.index({ name: 1 });
+doctorSchema.index({ createdAt: -1 });
 
 const Doctor: Model<IDoctor> =
   mongoose.models.Doctor ||

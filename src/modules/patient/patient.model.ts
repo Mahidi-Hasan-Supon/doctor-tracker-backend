@@ -80,6 +80,7 @@ const patientSchema = new Schema<IPatient>(
 patientSchema.index({ doctorId: 1, createdAt: -1 });
 patientSchema.index({ name: 1 });
 patientSchema.index({ email: 1 });
+patientSchema.index({ createdAt: -1 });
 
 const Patient: Model<IPatient> =
   mongoose.models.Patient || mongoose.model<IPatient>("Patient", patientSchema);
