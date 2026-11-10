@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import config from "./config";
+import { authRoute } from "./modules/auth/auth.route";
 
 const app = express();
 
@@ -32,6 +33,12 @@ app.get("/", (req: Request, res: Response) => {
     message: "Welcome to Doctor Tracker API",
   });
 });
+
+
+app.use("/api/auth", authRoute);
+
+
+
 
 export default app;
 
