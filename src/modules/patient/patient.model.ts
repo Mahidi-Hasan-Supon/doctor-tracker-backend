@@ -1,20 +1,14 @@
-
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
-
-export type PatientCondition =
-  | "STABLE"
-  | "CRITICAL"
-  | "RECOVERING";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IPatient extends Document {
   name: string;
+  email: string;
+  phone: string;
   age: number;
   gender: "MALE" | "FEMALE";
-  phone: string;
-  email?: string;
-  address?: string;
-  condition: PatientCondition;
-  doctorId: Types.ObjectId;
+  address: string;
+  medicalHistory?: string;
+  doctorId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,12 +21,24 @@ const patientSchema = new Schema<IPatient>(
       trim: true,
     },
 
+    email: {
+      type: String,
+      required: [true, "Patient email is required"],
+      lowercase: true,
+      trim: true,
+    },
+
+    phone: {
+      type: String,
+      required: [true, "Patient phone number is required"],
+      trim: true,
+    },
+
     age: {
       type: Number,
       required: [true, "Patient age is required"],
       min: [0, "Age cannot be negative"],
-      max: [150, "Invalid age"],
-    },
+    },   
 
     gender: {
       type: String,
@@ -40,50 +46,35 @@ const patientSchema = new Schema<IPatient>(
       required: [true, "Gender is required"],
     },
 
-    phone: {
-      type: String,
-      required: [true, "Phone number is required"],
-      trim: true,
-    },
-
-    email: {
-      type: String,
-      lowercase: true,
-      trim: true,
-    },
-
     address: {
       type: String,
+      required: [true, "Patient address is required"],
       trim: true,
     },
 
-    condition: {
+    medicalHistory: {
       type: String,
-      enum: ["STABLE", "CRITICAL", "RECOVERING"],
-      default: "STABLE",
+      trim: true,
     },
-
+   
     doctorId: {
       type: Schema.Types.ObjectId,
       ref: "Doctor",
-      required: [true, "Doctor reference is required"],
+      required: [true, "Doctor ID is required"],
     },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
-// Search, filtering and relationship indexes
-patientSchema.index({ name: 1 });
-patientSchema.index({ doctorId: 1 });
-patientSchema.index({ condition: 1 });
-patientSchema.index({ createdAt: -1 });
+// Indexes
 patientSchema.index({ doctorId: 1, createdAt: -1 });
+patientSchema.index({ name: 1 });
+patientSchema.index({ email: 1 });
 
 const Patient: Model<IPatient> =
-  mongoose.models.Patient ||
-  mongoose.model<IPatient>("Patient", patientSchema);
+  mongoose.models.Patient || mongoose.model<IPatient>("Patient", patientSchema);
 
 export default Patient;
