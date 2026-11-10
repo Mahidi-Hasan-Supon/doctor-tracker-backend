@@ -10,6 +10,7 @@ import globalErrorHandler from "./middlewares/globalErrorHandler";
 import { notFound } from "./middlewares/notFound";
 import { doctorRoute } from "./modules/doctor/doctor.route";
 import { patientRoute } from "./modules/patient/patient.route";
+import { dashboardRoute } from "./modules/dashboard/dashboard.route";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoute);
 app.use("/api/doctors", doctorRoute);
 app.use("/api/patients", patientRoute);
+app.use("/api/dashboard", dashboardRoute);
 
 
 
