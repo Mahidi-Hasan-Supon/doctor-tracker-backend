@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import config from "./config";
 import { authRoute } from "./modules/auth/auth.route";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
+import { notFound } from "./middlewares/notFound";
 
 const app = express();
 
@@ -36,8 +38,8 @@ app.get("/", (req: Request, res: Response) => {
 
 
 app.use("/api/auth", authRoute);
-
-
+app.use(globalErrorHandler)
+app.use(notFound)
 
 
 export default app;

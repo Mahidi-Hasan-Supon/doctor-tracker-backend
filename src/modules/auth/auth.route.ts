@@ -3,6 +3,7 @@ import { Router } from "express";
 import { AuthController } from "./auth.controller.js";
 import { AuthValidation } from "./auth.validation.js";
 import validateRequest from "../../middlewares/validateRequest.js";
+import authMiddleware from "../../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -25,5 +26,12 @@ router.post("/refresh-token", AuthController.refreshAccessToken);
 
 // Admin Logout
 router.post("/logout", AuthController.logoutAdmin);
+
+// Get Logged In Admin
+router.get(
+  "/me",
+  authMiddleware,
+  AuthController.getMe
+);
 
 export const authRoute = router;

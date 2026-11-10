@@ -100,10 +100,29 @@ const logoutAdmin = async (req: Request, res: Response) => {
 };
 
 
+// Get Logged In Admin
+const getMe = async (req: Request, res: Response) => {
+  const user = req.user;
+
+  const result = await AuthService.getMe(user?.userId as string);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "Admin profile retrieved successfully",
+    data: {
+      name: result.name,
+      email: result.email,
+      role: result.role,
+      isActive: result.isActive,
+    },
+  });
+};
+
 
 export const AuthController = {
   registerAdmin,
   loginAdmin,
   logoutAdmin,
-  refreshAccessToken
+  refreshAccessToken,
+  getMe
 };

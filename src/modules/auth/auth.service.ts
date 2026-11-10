@@ -194,9 +194,25 @@ const refreshAccessToken = async (refreshToken?: string) => {
   };
 };
 
+// Get Logged In Admin
+const getMe = async (userId: string) => {
+  const admin = await User.findById(userId);
+
+  if (!admin) {
+    throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
+  }
+
+  if (!admin.isActive) {
+    throw new AppError(httpStatus.FORBIDDEN, "Your account is inactive");
+  }
+
+  return admin;
+};
+
 export const AuthService = {
   registerAdmin,
   loginAdmin,
   logoutAdmin,
-  refreshAccessToken
+  refreshAccessToken,
+  getMe
 };
