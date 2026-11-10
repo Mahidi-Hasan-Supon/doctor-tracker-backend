@@ -3,10 +3,13 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IDoctor extends Document {
   name: string;
-  specialization: string;
-  hospital: string;
-  phone: string;
   email: string;
+  phone: string;
+  specialization: string;
+  qualification: string;
+  experience: number;
+  consultationFee: number;
+  address: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,15 +23,11 @@ const doctorSchema = new Schema<IDoctor>(
       trim: true,
     },
 
-    specialization: {
+    email: {
       type: String,
-      required: [true, "Specialization is required"],
-      trim: true,
-    },
-
-    hospital: {
-      type: String,
-      required: [true, "Hospital name is required"],
+      required: [true, "Doctor email is required"],
+      unique: true,
+      lowercase: true,
       trim: true,
     },
 
@@ -38,10 +37,33 @@ const doctorSchema = new Schema<IDoctor>(
       trim: true,
     },
 
-    email: {
+    specialization: {
       type: String,
-      required: [true, "Email is required"],
-      lowercase: true,
+      required: [true, "Specialization is required"],
+      trim: true,
+    },
+
+    qualification: {
+      type: String,
+      required: [true, "Qualification is required"],
+      trim: true,
+    },
+
+    experience: {
+      type: Number,
+      required: [true, "Experience is required"],
+      min: [0, "Experience cannot be negative"],
+    },
+
+    consultationFee: {
+      type: Number,
+      required: [true, "Consultation fee is required"],
+      min: [0, "Consultation fee cannot be negative"],
+    },
+
+    address: {
+      type: String,
+      required: [true, "Address is required"],
       trim: true,
     },
 
@@ -56,11 +78,9 @@ const doctorSchema = new Schema<IDoctor>(
   }
 );
 
-// Search and filtering indexes
+// Indexes for optimized queries
+doctorSchema.index({ specialization: 1, isActive: 1 });
 doctorSchema.index({ name: 1 });
-doctorSchema.index({ specialization: 1 });
-doctorSchema.index({ createdAt: -1 });
-doctorSchema.index({ email: 1 }, { unique: true });
 
 const Doctor: Model<IDoctor> =
   mongoose.models.Doctor ||
