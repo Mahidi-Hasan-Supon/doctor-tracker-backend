@@ -7,6 +7,7 @@ export interface IPatient extends Document {
   age: number;
   gender: "MALE" | "FEMALE";
   address: string;
+  condition: string;
   medicalHistory?: string;
   doctorId: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -38,7 +39,7 @@ const patientSchema = new Schema<IPatient>(
       type: Number,
       required: [true, "Patient age is required"],
       min: [0, "Age cannot be negative"],
-    },   
+    },
 
     gender: {
       type: String,
@@ -51,12 +52,18 @@ const patientSchema = new Schema<IPatient>(
       required: [true, "Patient address is required"],
       trim: true,
     },
+    condition: {
+      type: String,
+      required: [true, "Patient condition is required"],
+      trim: true,
+      index: true,
+    },
 
     medicalHistory: {
       type: String,
       trim: true,
     },
-   
+
     doctorId: {
       type: Schema.Types.ObjectId,
       ref: "Doctor",
