@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "outDir": "./dist",
@@ -15,12 +16,8 @@
     "noUncheckedSideEffectImports": true,
     "esModuleInterop": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-
-  // "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "api"]
 }
