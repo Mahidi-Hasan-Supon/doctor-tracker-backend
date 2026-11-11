@@ -4,14 +4,13 @@ import express, { type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import config from "./config";
-import { authRoute } from "./modules/auth/auth.route";
-import globalErrorHandler from "./middlewares/globalErrorHandler";
-import { notFound } from "./middlewares/notFound";
-import { doctorRoute } from "./modules/doctor/doctor.route";
-import { patientRoute } from "./modules/patient/patient.route";
-import { dashboardRoute } from "./modules/dashboard/dashboard.route";
-
+import config from "./config/index.js";
+import { authRoute } from "./modules/auth/auth.route.js";
+import globalErrorHandler from "./middlewares/globalErrorHandler.js";
+import { notFound } from "./middlewares/notFound.js";
+import { doctorRoute } from "./modules/doctor/doctor.route.js";
+import { patientRoute } from "./modules/patient/patient.route.js";
+import { dashboardRoute } from "./modules/dashboard/dashboard.route.js";
 const app = express();
 
 

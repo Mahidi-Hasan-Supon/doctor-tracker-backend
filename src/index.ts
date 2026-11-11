@@ -1,7 +1,13 @@
-
 import app from "./app.js";
 import connectDB from "./config/database.js";
 
-await connectDB();
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default app;
