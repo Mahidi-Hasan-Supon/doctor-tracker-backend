@@ -6,8 +6,6 @@ import type {
   CreateDoctorInput,
   UpdateDoctorInput,
 } from "./doctor.validation.js";
-import mongoose from "mongoose";
-import type { IDoctor } from "./doctor.model.js";
 
 // Create Doctor
 const createDoctor = async (payload: CreateDoctorInput["body"]) => {
@@ -27,10 +25,10 @@ const createDoctor = async (payload: CreateDoctorInput["body"]) => {
   return doctor;
 };
 
+// Get All Doctors
 const getAllDoctors = async (query: {
   search?: string;
   specialization?: string;
-  isActive?: string;
   startDate?: string;
   endDate?: string;
   page?: string;
@@ -39,23 +37,22 @@ const getAllDoctors = async (query: {
   const {
     search,
     specialization,
-    isActive,
     startDate,
     endDate,
     page = "1",
     limit = "10",
   } = query;
 
-  //   const filter: mongoose.FilterQuery<IDoctor> = {};
   const filter: Record<string, any> = {};
 
-  // Search by name, email, phone and specialization
+  // Search by name, email, phone, specialization and hospital
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
       { email: { $regex: search, $options: "i" } },
       { phone: { $regex: search, $options: "i" } },
       { specialization: { $regex: search, $options: "i" } },
+      { hospital: { $regex: search, $options: "i" } },
     ];
   }
 
@@ -65,11 +62,6 @@ const getAllDoctors = async (query: {
       $regex: specialization,
       $options: "i",
     };
-  }
-
-  // Filter by active status
-  if (isActive !== undefined) {
-    filter.isActive = isActive === "true";
   }
 
   // Date-wise filter

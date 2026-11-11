@@ -77,9 +77,23 @@ const updatePatientValidationSchema = z.object({
   }),
 });
 
+const getPatientsByDoctorValidationSchema = z.object({
+  params: z.object({
+    doctorId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid doctor ID"),
+  }),
+  query: z.object({
+    search: z.string().optional(),
+    condition: z.string().optional(),
+    gender: z.enum(["MALE", "FEMALE", "male", "female"]).optional(),
+    page: z.string().regex(/^[1-9]\d*$/).optional(),
+    limit: z.string().regex(/^[1-9]\d*$/).optional(),
+  }),
+});
+
 export const PatientValidation = {
   createPatientValidationSchema,
   updatePatientValidationSchema,
+  getPatientsByDoctorValidationSchema
 };
 
 export type CreatePatientInput = z.infer<typeof createPatientValidationSchema>;

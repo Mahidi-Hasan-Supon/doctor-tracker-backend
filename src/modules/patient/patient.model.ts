@@ -9,7 +9,7 @@ export interface IPatient extends Document {
   address: string;
   condition: string;
   medicalHistory?: string;
-  doctorId: mongoose.Types.ObjectId;
+  doctorId: mongoose.Types.ObjectId | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -64,10 +64,15 @@ const patientSchema = new Schema<IPatient>(
       trim: true,
     },
 
+    // doctorId: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "Doctor",
+    //   required: [true, "Doctor ID is required"],
+    // },
     doctorId: {
       type: Schema.Types.ObjectId,
       ref: "Doctor",
-      required: [true, "Doctor ID is required"],
+      default: null,
     },
   },
   {

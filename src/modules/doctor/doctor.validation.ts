@@ -9,11 +9,15 @@ const createDoctorValidationSchema = z.object({
       .max(50, "Name cannot exceed 50 characters")
       .trim(),
 
-    email: z
+    specialization: z
       .string()
-      .email("Please provide a valid email")
-      .trim()
-      .toLowerCase(),
+      .min(2, "Specialization is required")
+      .trim(),
+
+    hospital: z
+      .string()
+      .min(2, "Hospital name is required")
+      .trim(),
 
     phone: z
       .string()
@@ -21,28 +25,11 @@ const createDoctorValidationSchema = z.object({
       .max(15, "Phone number cannot exceed 15 characters")
       .trim(),
 
-    specialization: z
+    email: z
       .string()
-      .min(2, "Specialization is required")
-      .trim(),
-
-    qualification: z
-      .string()
-      .min(2, "Qualification is required")
-      .trim(),
-
-    experience: z
-      .number()
-      .min(0, "Experience cannot be negative"),
-
-    consultationFee: z
-      .number()
-      .min(0, "Consultation fee cannot be negative"),
-
-    address: z
-      .string()
-      .min(5, "Address must be at least 5 characters")
-      .trim(),
+      .email("Please provide a valid email")
+      .trim()
+      .toLowerCase(),
   }),
 });
 
@@ -50,26 +37,18 @@ const updateDoctorValidationSchema = z.object({
   body: z.object({
     name: z.string().min(3).max(50).trim().optional(),
 
+    specialization: z.string().min(2).trim().optional(),
+
+    hospital: z.string().min(2).trim().optional(),
+
+    phone: z.string().min(10).max(15).trim().optional(),
+
     email: z
       .string()
       .email("Please provide a valid email")
       .trim()
       .toLowerCase()
       .optional(),
-
-    phone: z.string().min(10).max(15).trim().optional(),
-
-    specialization: z.string().min(2).trim().optional(),
-
-    qualification: z.string().min(2).trim().optional(),
-
-    experience: z.number().min(0).optional(),
-
-    consultationFee: z.number().min(0).optional(),
-
-    address: z.string().min(5).trim().optional(),
-
-    isActive: z.boolean().optional(),
   }),
 });
 

@@ -29,7 +29,7 @@ router.post("/logout", AuthController.logoutAdmin);
 
 // Get Logged In Admin
 router.get(
-  "/me",
+  "/getMe",
   authMiddleware,
   AuthController.getMe
 );

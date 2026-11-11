@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-
+import mongoose from "mongoose";
 import Patient from "./patient.model.js";
 import Doctor from "../doctor/doctor.model.js";
 import AppError from "../../errors/appError.js";
@@ -18,12 +18,12 @@ const createPatient = async (payload: CreatePatientInput["body"]) => {
     throw new AppError(httpStatus.NOT_FOUND, "Doctor not found");
   }
 
-  if (!doctor.isActive) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Cannot add patient to an inactive doctor",
-    );
-  }
+  // if (!doctor.isActive) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     "Cannot add patient to an inactive doctor",
+  //   );
+  // }
 
   const patient = await Patient.create(payload);
 
@@ -138,16 +138,70 @@ const getSinglePatient = async (patientId: string) => {
 };
 
 // Get Patients By Doctor
-const getPatientsByDoctor = async (doctorId: string) => {
+const getPatientsByDoctor = async (
+  doctorId: string,
+  query: {
+    search?: string;
+    condition?: string;
+    gender?: string;
+    page?: string;
+    limit?: string;
+  },
+) => {
   const doctor = await Doctor.findById(doctorId);
 
   if (!doctor) {
     throw new AppError(httpStatus.NOT_FOUND, "Doctor not found");
   }
 
-  const patients = await Patient.find({ doctorId }).sort({ createdAt: -1 });
+  const filter: Record<string, any> = { doctorId };
 
-  return patients;
+  // Search
+  if (query.search) {
+    filter.$or = [
+      { name: { $regex: query.search, $options: "i" } },
+      { email: { $regex: query.search, $options: "i" } },
+      { phone: { $regex: query.search, $options: "i" } },
+    ];
+  }
+
+  // Condition Filter
+  if (query.condition) {
+    filter.condition = {
+      $regex: query.condition,
+      $options: "i",
+    };
+  }
+
+  // Gender Filter
+  if (query.gender) {
+    filter.gender = query.gender.toUpperCase();
+  }
+
+  // Pagination
+  const page = Math.max(1, Number(query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
+  const skip = (page - 1) * limit;
+
+  const [patients, total] = await Promise.all([
+    Patient.find(filter)
+      .populate("doctorId", "name specialization")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    Patient.countDocuments(filter),
+  ]);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: patients,
+  };
 };
 
 // Update Patient
@@ -169,12 +223,12 @@ const updatePatient = async (
       throw new AppError(httpStatus.NOT_FOUND, "Doctor not found");
     }
 
-    if (!doctor.isActive) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        "Cannot assign patient to an inactive doctor",
-      );
-    }
+    // if (!doctor.isActive) {
+    //   throw new AppError(
+    //     httpStatus.BAD_REQUEST,
+    //     "Cannot assign patient to an inactive doctor",
+    //   );
+    // }
   }
 
   const updatedPatient = await Patient.findByIdAndUpdate(
@@ -203,26 +257,31 @@ const deletePatient = async (patientId: string) => {
 };
 
 // Delete Patient From Doctor
-const deletePatientFromDoctor = async (doctorId: string, patientId: string) => {
+// Remove Patient From Doctor
+const deletePatientFromDoctor = async (
+  doctorId: string,
+  patientId: string,
+) => {
   const doctor = await Doctor.findById(doctorId);
 
   if (!doctor) {
     throw new AppError(httpStatus.NOT_FOUND, "Doctor not found");
   }
 
-  const patient = await Patient.findOneAndDelete({
-    _id: patientId,
-    doctorId,
-  });
+  const patient = await Patient.findById(patientId);
 
-  if (!patient) {
+  if (!patient || patient.doctorId?.toString() !== doctorId) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       "Patient not found under this doctor",
     );
   }
 
-  return null;
+  patient.doctorId = null as unknown as mongoose.Types.ObjectId;
+
+  await patient.save();
+
+  return patient;
 };
 
 export const PatientService = {

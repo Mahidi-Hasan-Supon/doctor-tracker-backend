@@ -77,13 +77,14 @@ const getPatientsByDoctor = async (
   next: NextFunction,
 ) => {
   try {
-    const { doctorId } = req.params;
-
-    const result = await PatientService.getPatientsByDoctor(doctorId as string);
+    const result = await PatientService.getPatientsByDoctor(
+      req.params.doctorId as string,
+      req.query,
+    );
 
     res.status(httpStatus.OK).json({
       success: true,
-      message: "Doctor's patients retrieved successfully",
+      message: "Doctor patients retrieved successfully",
       data: result,
     });
   } catch (error) {

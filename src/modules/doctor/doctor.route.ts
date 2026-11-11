@@ -16,7 +16,7 @@ router.post(
 );
 
 // Get All Doctors (Search, Filter, Pagination)
-router.get("/", authMiddleware, DoctorController.getAllDoctors);
+router.get("/", DoctorController.getAllDoctors);
 
 // Get Single Doctor
 router.get("/:doctorId", authMiddleware, DoctorController.getSingleDoctor);

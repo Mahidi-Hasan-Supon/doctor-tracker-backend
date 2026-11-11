@@ -22,6 +22,9 @@ router.get("/", authMiddleware, PatientController.getAllPatients);
 router.get(
   "/doctor/:doctorId",
   authMiddleware,
+  validateRequest(
+    PatientValidation.getPatientsByDoctorValidationSchema,
+  ),
   PatientController.getPatientsByDoctor,
 );
 
